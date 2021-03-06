@@ -1,7 +1,6 @@
 package repositories
 
 import (
-	"errors"
 	"go-mux/domains"
 )
 
@@ -9,6 +8,8 @@ import (
 type UserRepository interface {
 	Find(id string) (domains.User, error)
 }
+
+var baseRepo = &BaseRepository{name: "users"}
 
 var dummyUsers = []domains.User{
 	{ID: "1", Name: "user1", Email: "user1@example.com", Birthday: "2000-01-01"},
@@ -18,17 +19,11 @@ var dummyUsers = []domains.User{
 
 // FindUser ユーザー単体を返す
 func FindUser(id string) (domains.User, error) {
-	for _, user := range dummyUsers {
-		if user.ID == id {
-			return user, nil
-		}
-	}
-
-	var empty interface{}
-	return empty.(domains.User), errors.New("user not found")
+	user := baseRepo.Find(id).(domains.User)
+	return user, nil
 }
 
 // AllUser for
 func AllUser() ([]domains.User, error) {
-	return dummyUsers, nil
+	return baseRepo.All().([]domains.User), nil
 }

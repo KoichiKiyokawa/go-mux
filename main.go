@@ -11,6 +11,8 @@ import (
 func main() {
 	r := mux.NewRouter()
 	s := r.PathPrefix("/api").Subrouter()
+
+	// Routing
 	s.HandleFunc("/users", handlers.GetUsers).Methods("GET")
 	s.HandleFunc("/users/{id}", handlers.GetUser).Methods("GET")
 

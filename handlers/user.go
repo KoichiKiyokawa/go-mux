@@ -14,6 +14,7 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	users, err := repositories.AllUser()
 	if err != nil {
 		res, _ := json.Marshal(map[string]string{"message": "user not found"})
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(res)
 		return
 	}
@@ -28,6 +29,7 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 	user, err := repositories.FindUser(params["id"])
 	if err != nil {
 		res, _ := json.Marshal(map[string]string{"message": "user not found"})
+		w.WriteHeader(http.StatusBadRequest)
 		w.Write(res)
 		return
 	}
