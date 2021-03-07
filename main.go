@@ -13,9 +13,9 @@ func main() {
 	s := r.PathPrefix("/api").Subrouter()
 
 	// Routing
-	s.HandleFunc("/users", handlers.GetUsers).Methods("GET")
-	s.HandleFunc("/users/{id}", handlers.GetUser).Methods("GET")
-	s.HandleFunc("/users", handlers.CreateUser).Methods("POST")
+	s.HandleFunc("/users", handlers.UserIndex).Methods("GET")
+	s.HandleFunc("/users/{id}", handlers.UserShow).Methods("GET")
+	s.HandleFunc("/users", handlers.UserCreate).Methods("POST")
 	// s.HandleFunc("/users/{id}", handlers.UpdateUser).Methods("PATCH")
 
 	srv := &http.Server{

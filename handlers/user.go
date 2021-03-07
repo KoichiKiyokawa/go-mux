@@ -4,15 +4,16 @@ import (
 	"encoding/json"
 	"go-mux/domains"
 	"go-mux/repositories"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/gorilla/mux"
 )
 
-// GetUsers is for get user list
-func GetUsers(w http.ResponseWriter, r *http.Request) {
-	users, err := repositories.AllUser()
+var userRepo = repositories.UserRepository{}
+
+// UserIndex is for get user list
+func UserIndex(w http.ResponseWriter, r *http.Request) {
+	users, err := userRepo.All()
 	if err != nil {
 		res, _ := json.Marshal(map[string]string{"message": "user not found"})
 		w.WriteHeader(http.StatusBadRequest)
@@ -24,27 +25,27 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	w.Write(res)
 }
 
-// GetUser for
-func GetUser(w http.ResponseWriter, r *http.Request) {
+// UserShow for
+func UserShow(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	user, err := repositories.FindUser(params["id"])
+	user, err := userRepo.Find(params["id"])
 	if err != nil {
-		res, _ := json.Marshal(map[string]string{"message": "user not found"})
 		w.WriteHeader(http.StatusBadRequest)
-		w.Write(res)
 		return
 	}
 	res, _ := json.Marshal(map[string]domains.User{"user": user})
 	w.Write(res)
 }
 
-// CreateUser is
-func CreateUser(w http.ResponseWriter, r *http.Request) {
+// UserCreate is
+func UserCreate(w http.ResponseWriter, r *http.Request) {
 	var user domains.User
-	reqBody, _ := ioutil.ReadAll(r.Body)
-	json.Unmarshal(reqBody, &user)
+	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
 
-	createdUser, _ := repositories.CreateUser(user)
+	createdUser, _ := userRepo.Create(user)
 	res, _ := json.Marshal(map[string]domains.User{"user": createdUser})
 	w.Write(res)
 }

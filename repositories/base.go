@@ -2,7 +2,6 @@ package repositories
 
 import (
 	"context"
-	"log"
 
 	"cloud.google.com/go/firestore"
 	firebase "firebase.google.com/go"
@@ -33,13 +32,16 @@ func (r BaseRepository) getCollectionRef() *firestore.CollectionRef {
 }
 
 // Find is
-func (r BaseRepository) Find(id string) interface{} {
-	snap, _ := r.getCollectionRef().Doc(id).Get(ctx)
-	return withID(id, snap.Data())
+func (r BaseRepository) Find(id string) (interface{}, error) {
+	snap, err := r.getCollectionRef().Doc(id).Get(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return withID(id, snap.Data()), nil
 }
 
 // All is
-func (r BaseRepository) All() interface{} {
+func (r BaseRepository) All() (interface{}, error) {
 	var data []map[string]interface{}
 	docIter := r.getCollectionRef().Documents(ctx)
 	for {
@@ -48,18 +50,18 @@ func (r BaseRepository) All() interface{} {
 			break
 		}
 		if err != nil {
-			log.Fatalln(err)
+			return nil, err
 		}
 		data = append(data, withID(doc.Ref.ID, doc.Data()))
 	}
-	return data
+	return data, nil
 }
 
 // Create is
-func (r BaseRepository) Create(data interface{}) interface{} {
+func (r BaseRepository) Create(data interface{}) (interface{}, error) {
 	docRef, _, err := r.getCollectionRef().Add(ctx, data)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
-	return withID(docRef.ID, data)
+	return withID(docRef.ID, data), nil
 }
