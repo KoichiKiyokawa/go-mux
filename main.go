@@ -18,6 +18,8 @@ func main() {
 	s.HandleFunc("/users", handlers.UserCreate).Methods("POST")
 	// s.HandleFunc("/users/{id}", handlers.UpdateUser).Methods("PATCH")
 
+	s.HandleFunc("/posts", handlers.PostCreate).Methods("POST")
+
 	srv := &http.Server{
 		Handler: r,
 		Addr:    ":8080",
