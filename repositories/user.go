@@ -27,3 +27,8 @@ func FindUser(id string) (domains.User, error) {
 func AllUser() ([]domains.User, error) {
 	return baseRepo.All().([]domains.User), nil
 }
+
+// CreateUser is
+func CreateUser(user domains.User) (domains.User, error) {
+	return baseRepo.Create(user).(domains.User), nil
+}
